@@ -14,10 +14,12 @@ def create_app(config_class=DevelopmentConfig):
     
     # Import and register blueprints
     from .routes.user_routes import user_bp
+    from .routes.product_routes import product_bp
 
     
     # Register blueprints
     app.register_blueprint(user_bp, url_prefix='/api/v1/users')
     # app.register_blueprint(user_bp, url_prefix='/api/v1/user')
+    app.register_blueprint(product_bp, url_prefix='/api/v1/product')
     
     return app

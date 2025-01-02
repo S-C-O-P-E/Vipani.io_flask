@@ -11,7 +11,7 @@ class UserController:
             # Ensure user_id is an ObjectId
             
             users_collection = mongo.db.userdatas
-            user = users_collection.find_one({"userid": "user1"})
+            user = users_collection.find_one({"userid": user_id})
             print(f"Fetched user: {user}")
             
             if user:
