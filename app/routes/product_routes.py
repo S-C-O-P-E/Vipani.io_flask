@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from ..controllers.product_controller import ProductController
-
+    
 product_bp = Blueprint('product', __name__)
 
 # @product_bp.route('/', methods=['GET'])
@@ -9,7 +9,7 @@ product_bp = Blueprint('product', __name__)
 
 @product_bp.route('/get', methods=['GET'])
 def get_product():
-    product_id = request.args.get('productid')
+    product_id = request.args.get('productId')
     print(f"Received product ID: {product_id}")
     if not product_id:
         return jsonify({"error": "Product ID is required"}), 400

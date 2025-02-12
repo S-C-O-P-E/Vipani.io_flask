@@ -11,11 +11,18 @@ def index():
     """Welcome to Vipani.io!"""
     return "Welcome to  Vipani.io!"
 
-@user_bp.route('/getuser', methods=['GET'])
+'''@user_bp.route('/getuser', methods=['GET'])
 def get_user_data():
     user_id = request.args.get('userid')
     user = UserController.get_user(user_id)
     return jsonify(user), 200
+'''
+@user_bp.route('/getuser', methods=['GET'])
+def get_user_data():
+    user_id = request.args.get('userid')
+    response, status = UserController.get_user(user_id)  # ✅ Capture status
+    return jsonify(response), status
+
 
 
 
