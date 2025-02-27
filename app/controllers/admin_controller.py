@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 from bson import ObjectId
 
 # Folder to save banners
-UPLOAD_FOLDER = "app/images/banners"
+UPLOAD_FOLDER = "media/banners"
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 

@@ -31,5 +31,6 @@ def delete_banner(banner_id):
 
 @admin_bp.route("/images/banners/<filename>")
 def serve_banner(filename):
+    print("Serving banner:", filename)
     """Serve images directly from the banners folder"""
     return AdminController.serve_banner(filename)
