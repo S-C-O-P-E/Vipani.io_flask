@@ -17,6 +17,31 @@ def get_user_data():
     user = UserController.get_user(user_id)
     return jsonify(user), 200
 
+@user_bp.route('/login', methods=['POST'])
+def login():
+    """User login endpoint"""
+    data = request.get_json()
+    print("Registering user with mobile number:", type(data.get('mobile')))
+    result = UserController.login_user(data)
+    return jsonify(result)
+
+@user_bp.route('/register', methods=['POST'])
+def register():
+    """User registration endpoint"""
+    data = request.get_json()
+    result = UserController.register_user(data)
+    return jsonify(result)
+
+@user_bp.route('/update-location', methods=['PATCH'])
+def update_location():
+    """Update user location endpoint"""
+    mobile = request.args.get('mobile')
+    mobile = int(mobile)
+    data = request.get_json()
+    result = UserController.update_location(mobile,data)
+    return jsonify(result)
+
+
 
 
 
