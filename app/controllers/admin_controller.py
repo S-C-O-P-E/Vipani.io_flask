@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 from bson import ObjectId
 
 # Folder to save banners
-UPLOAD_FOLDER = "media/banners"
+UPLOAD_FOLDER = "images/banners"
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
@@ -34,7 +34,7 @@ class AdminController:
 
             # Generate accessible image URL
             server_url = "https://vipani-io-flask.onrender.com"
-            image_url = f"{server_url}/api/v1/admin/images/banners/{filename}"
+            image_url = f"{server_url.rstrip('/')}/api/v1/admin/images/banners/{filename}"
 
             # Save to MongoDB
             banner = {
