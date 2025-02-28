@@ -7,12 +7,12 @@ class UserController:
     def get_user(cls, user_id):
         try:
             
-            print(f"Fetching user with ID: {user_id}",type(user_id))
+            #print(f"Fetching user with ID: {user_id}",type(user_id))
             # Ensure user_id is an ObjectId
             
             users_collection = mongo.db.userdatas
             user = users_collection.find_one({"userid": user_id})
-            print(f"Fetched user: {user}")
+            #print(f"Fetched user: {user}")
             
             if user:
                 # Convert ObjectId to string for JSON serialization
@@ -30,7 +30,7 @@ class UserController:
             existing_user = users_collection.find_one({"mobile": user_data["mobile"]})
             if existing_user:
                 existing_user.pop("_id", None)  # Remove MongoDB _id
-                print(f"Existing user: {existing_user}")
+                #print(f"Existing user: {existing_user}")
                 return {"message": "User already exists", "user": existing_user}, 200
             
             return {"message": "User not found"}, 404
@@ -48,10 +48,10 @@ class UserController:
             # Generate a unique user ID
             user_id = str(ObjectId())  # Generate user ID
             user_data["userid"] = user_id
-            print(f"Generated user ID: {user_id}")
+            #print(f"Generated user ID: {user_id}")
             # Insert the user data into the database (excluding _id)
             users_collection.insert_one(user_data)
-            print("User data inserted successfully")
+            #print("User data inserted successfully")
             # Remove _id before returning
             user_data.pop("_id", None)
             return {"message": "User registered successfully", "user": user_data}, 201

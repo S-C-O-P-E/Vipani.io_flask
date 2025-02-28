@@ -21,7 +21,7 @@ def get_user_data():
 def login():
     """User login endpoint"""
     data = request.get_json()
-    print("Registering user with mobile number:", type(data.get('mobile')))
+    #print("Registering user with mobile number:", type(data.get('mobile')))
     result = UserController.login_user(data)
     return jsonify(result)
 
