@@ -59,7 +59,7 @@ class ProductController:
                     filepath = get_file_path(filename)
                     file.save(filepath)  # Save file
 
-                    server_url = "http://127.0.0.1:5000"
+                    server_url = "https://vipani-io-flask.onrender.com"
                     file_url = f"{server_url.rstrip('/')}/api/v1/product/images/products/{filename}"
                     print(file_url)
                     file_urls.append(file_url)
