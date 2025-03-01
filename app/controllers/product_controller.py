@@ -122,4 +122,64 @@ class ProductController:
             return {"error": str(e)}, 500
         
 
+    @classmethod
+    def add_to_wishlist(cls, data):
+        try:
+            products_collection = mongo.db.productdata
+            users_collection = mongo.db.userdatas
+            productId = data.get("productId")
+            mobile = data.get("mobile")
+            user = users_collection.find_one({"mobile": mobile})
+            if not user:
+                return {"error": "User not found"}, 404
+            product = products_collection.find_one({"productId": productId})
+            if not product:
+                return {"error": "Product not found"}, 404
+            list = user.get("wishlist", [])
+            if productId in list:
+                return {"error": "Product already in wishlist"}, 409
+            list.append(productId)
+            users_collection.update_one({"mobile": mobile}, {"$set": {"wishlist": list}})   
+            return {"message": "Product added to wishlist"}, 200
+        except Exception as e:
+            return {"error": str(e)}, 500
+        
+    @classmethod
+    def get_wishlist(cls, mobile):
+        try:
+            users_collection = mongo.db.userdatas
+            mobile = int(mobile)
+            user = users_collection.find_one({"mobile": mobile})
+            print(user)
+            if not user:
+                return {"error": "User not found"}, 404
+            wishlist = user.get("wishlist", [])
+            return {"wishlist": wishlist}, 200
+        except Exception as e:
+            return {"error": str(e)}, 500
+        
+    
+    @classmethod
+    def remove_from_wishlist(cls, data):
+        try:
+            products_collection = mongo.db.productdata
+            users_collection = mongo.db.userdatas
+            productId = data.get("productId")
+            mobile = data.get("mobile")
+            user = users_collection.find_one({"mobile": mobile})
+            if not user:
+                return {"error": "User not found"}, 404
+            product = products_collection.find_one({"productId": productId})
+            if not product:
+                return {"error": "Product not found"}, 404
+            list = user.get("wishlist", [])
+            if productId not in list:
+                return {"error": "Product not in wishlist"}, 404
+            list.remove(productId)
+            users_collection.update_one({"mobile": mobile}, {"$set": {"wishlist": list}})
+            return {"message": "Product removed from wishlist"}, 200
+        except Exception as e:
+            return {"error": str(e)}, 500
+        
+
     

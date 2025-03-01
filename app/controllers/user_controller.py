@@ -60,6 +60,24 @@ class UserController:
         
 
     @classmethod
+    def update_profile(cls,mobile, user_data):
+        try:
+            users_collection = mongo.db.userdatas
+            existing_user = users_collection.find_one({"mobile": mobile})
+            if not existing_user:
+                return {"error": "User not found"}, 404
+            # Update the user's profile
+            users_collection.update_one(
+                {"mobile": mobile},
+                {"$set": user_data}
+            )
+            return {"message": "Profile updated successfully"}, 200
+        except Exception as e:
+            return {"error": str(e)}, 500
+        
+        
+
+    @classmethod
     def update_location(cls,mobile, user_data):
         try:
             users_collection = mongo.db.userdatas
@@ -74,5 +92,41 @@ class UserController:
             return {"message": "Location updated successfully"}, 200
         except Exception as e:
             return {"error": str(e)}, 500
+        
+
+    @classmethod
+    def follow_user(cls, data):
+        try:
+            user_mobile = data.get("consumer_mobile")
+            producer_mobile = data.get("producer_mobile")
+            follow_collection = mongo.db.userdatas
+            user = follow_collection.find_one({"mobile": user_mobile})
+            producer = follow_collection.find_one({"mobile": producer_mobile})
+            if not user or not producer:
+                return {"error": "User not found"}, 404
+            following = user.get("following", [])
+            if producer_mobile in following:
+                pass
+            else:
+                following.append(producer_mobile)
+                follow_collection.update_one(
+                    {"mobile": user_mobile},
+                    {"$set": {"following": following}}
+                )
+            followers = producer.get("followers", [])
+            if user_mobile in followers:
+                pass
+            else:
+                followers.append(user_mobile)
+                follow_collection.update_one(
+                    {"mobile": producer_mobile},
+                    {"$set": {"followers": followers}}
+                )
+            return {"message": "User followed successfully"}, 200
+        except Exception as e:
+            return {"error": str(e)}, 500
+        
+            
+
         
         

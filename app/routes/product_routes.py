@@ -59,6 +59,28 @@ def get_products_by_category():
     return jsonify(response), status
 
 
+@product_bp.route('/addtowishlist', methods=['POST'])
+def add_to_wishlist():
+    """API endpoint to add a product to the wishlist"""
+    data = request.get_json()
+    response, status = ProductController.add_to_wishlist(data)
+    return jsonify(response), status
+
+
+@product_bp.route('/getwishlist', methods=['GET'])
+def get_wishlist():
+    """API endpoint to get the wishlist"""
+    mobile = request.args.get("mobile")
+    response, status = ProductController.get_wishlist(mobile)
+    return jsonify(response), status
+
+@product_bp.route('/removefromwishlist', methods=['DELETE'])
+def remove_from_wishlist():
+    """API endpoint to remove a product from the wishlist"""
+    data = request.get_json()
+    response, status = ProductController.remove_from_wishlist(data)
+    return jsonify(response), status
+
 
 
 

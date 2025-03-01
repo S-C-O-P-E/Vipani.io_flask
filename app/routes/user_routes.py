@@ -32,6 +32,16 @@ def register():
     result = UserController.register_user(data)
     return jsonify(result)
 
+
+@user_bp.route('/update-profile', methods=['PATCH'])
+def update_profile():
+    """Update user profile endpoint"""
+    mobile = request.args.get('mobile')
+    mobile = int(mobile)
+    data = request.get_json()
+    result = UserController.update_profile(mobile, data)
+    return jsonify(result)
+
 @user_bp.route('/update-location', methods=['PATCH'])
 def update_location():
     """Update user location endpoint"""
@@ -40,6 +50,15 @@ def update_location():
     data = request.get_json()
     result = UserController.update_location(mobile,data)
     return jsonify(result)
+
+
+@user_bp.route('/following', methods=['POST'])
+def follow():
+    """Follow a user endpoint"""
+    data = request.get_json()
+    result = UserController.follow_user(data)
+    return jsonify(result)
+
 
 
 
