@@ -35,6 +35,12 @@ def get_products():
     response, status = ProductController.get_products()
     return jsonify(response), status
 
+@product_bp.route('/getproductbyid', methods=['GET'])
+def get_product():
+    """API endpoint to get a product by ID"""
+    product_id = request.args.get('productId')
+    response, status = ProductController.get_product(product_id)
+    return jsonify(response), status
 
 @product_bp.route("/images/products/<filename>")
 def serve_product_media(filename):
@@ -80,6 +86,17 @@ def remove_from_wishlist():
     data = request.get_json()
     response, status = ProductController.remove_from_wishlist(data)
     return jsonify(response), status
+
+@product_bp.route('/getproductsnearuser', methods=['GET'])
+def get_products_near_user():
+    """API endpoint to get products sorted by proximity to the user"""
+    mobile = request.args.get("mobile")
+    if not mobile:
+        return jsonify({"error": "Mobile number is required"}), 400
+
+    response, status = ProductController.get_products_near_user(mobile)
+    return jsonify(response), status
+
 
 
 

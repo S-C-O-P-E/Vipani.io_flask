@@ -5,7 +5,7 @@ import os
 from werkzeug.utils import secure_filename
 from flask import send_from_directory
 from bson import ObjectId
-
+from math import radians, sin, cos, sqrt, atan2
 
 # Define the folder for storing product images/videos
 UPLOAD_FOLDER = "images/products"
@@ -80,7 +80,19 @@ class ProductController:
         except Exception as e:
             return {"error": str(e)}, 500
         
-    
+    @classmethod
+    def get_product(cls, product_id):
+        try:
+            print(product_id)
+            products_collection = mongo.db.productdata
+            product = products_collection.find_one({"productId": product_id}, {"_id": 0})
+            if product:
+                return product, 200
+            else:
+                return {"error": "Product not found"}, 404
+        except Exception as e:
+            return {"error": str(e)}, 500
+
     @classmethod
     def get_products(cls):
         try:
@@ -181,5 +193,52 @@ class ProductController:
         except Exception as e:
             return {"error": str(e)}, 500
         
+
+    #poximity listing
+    @staticmethod
+    def calculate_distance(lat1, lon1, lat2, lon2):
+        """Calculate the distance between two lat/lon points using the Haversine formula"""
+        R = 6371  # Radius of Earth in km
+        lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
+
+        dlat = lat2 - lat1
+        dlon = lon2 - lon1
+
+        a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+        c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+        return R * c  # Distance in km
+
+    @classmethod
+    def get_products_near_user(cls, mobile):
+        try:
+            users_collection = mongo.db.userdatas
+            products_collection = mongo.db.productdata
+
+            # Fetch user details
+            user = users_collection.find_one({"mobile": int(mobile)})
+            if not user:
+                return {"error": "User not found"}, 404
+
+            user_lat = int(user["latitude"])
+            user_lon = int(user["longitude"])
+
+            # Fetch all products
+            products = list(products_collection.find({}, {"_id": 0}))
+            
+            # Compute distances
+            for product in products:
+                product_lat = int(product.get("latitude", 0))
+                product_lon = int(product.get("longitude", 0))
+                product["distance"] = cls.calculate_distance(user_lat, user_lon, product_lat, product_lon)
+
+            # Sort products by distance
+            products = sorted(products, key=lambda x: x["distance"])
+
+            return products, 200
+
+        except Exception as e:
+            return {"error": str(e)}, 500
+
 
     
