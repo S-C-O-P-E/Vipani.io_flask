@@ -69,6 +69,44 @@ def follow():
     return jsonify(result)
 
 
+@user_bp.route('/create-order', methods=['POST'])
+def create_order():
+    """Create an order endpoint"""
+    mobile = request.args.get('mobile')
+    mobile = int(mobile)
+    productId = request.get_json()
+    result = UserController.create_order(mobile,productId)
+    return jsonify(result)
+
+
+@user_bp.route('/update-payment-status', methods=['PATCH'])
+def update_payment_status():
+    """Update payment status endpoint"""
+    mobile = request.args.get('mobile')
+    orderId = request.args.get('orderId')
+    data = request.get_json()
+    result = UserController.update_payment_status(orderId,mobile, data)
+    return jsonify(result)
+
+
+@user_bp.route('/get-orders-consumer', methods=['GET'])
+def get_orders_consumer():
+    """Get orders endpoint"""
+    mobile = request.args.get('mobile')
+    mobile = int(mobile)
+    result = UserController.get_orders_consumer(mobile)
+    return jsonify(result)
+
+@user_bp.route('/get-orders-producer', methods=['GET'])
+def get_orders_producer():
+    """Get orders endpoint"""
+    mobile = request.args.get('mobile')
+    mobile = int(mobile)
+    result = UserController.get_orders_producer(mobile)
+    return jsonify(result)
+
+
+
 
 
 

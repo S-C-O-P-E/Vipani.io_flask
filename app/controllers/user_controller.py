@@ -188,7 +188,68 @@ class UserController:
         except Exception as e:
             return {"error": str(e)}, 500
         
-            
 
+
+    @classmethod
+    def create_order(cls, mobile, data):
+        try:
+            orders_collection = mongo.db.orderdata
+            products_collection = mongo.db.productdata
+            orderId = str(ObjectId())
+            order_data = {
+                "orderId": orderId
+            }
+            product = products_collection.find_one({"productId": data["productId"]})
+            if not product:
+                return {"error": "Product not found"}, 404
+            if '_id' in product:
+                del product['_id']
+            order_data.update(product)
+            order_data["consumerMobile"] = mobile
+            order_data["producerMobile"] = int(product["mobile"])
+            del order_data["mobile"]
+            orders_collection.insert_one(order_data)
+            # Remove _id before returning
+            order_data.pop("_id", None)
+            print(order_data)
+            return {"message": "Order created successfully","orderId":orderId}, 200
+        except Exception as e:
+            return {"error": str(e)}, 500
         
+
+    @classmethod
+    def update_payment_status(cls,orderId,mobile, data):
+        try:
+            orders_collection = mongo.db.orderdata
+            order = orders_collection.find_one({"orderId": orderId})
+            if not order:
+                return {"error": "Order not found"}, 404
+            order.update(data)
+            orders_collection.update_one(
+                {"orderId": orderId},
+                {"$set": order}
+            )
+            return {"message": "Payment status updated successfully"}, 200
+        except Exception as e:
+            return {"error": str(e)}, 500
+
+
+    @classmethod
+    def get_orders_consumer(cls, mobile):
+        try:
+            orders_collection = mongo.db.orderdata
+            orders = list(orders_collection.find({"consumerMobile": mobile}, {"_id": 0}))
+            return orders, 200
+        except Exception as e:
+            return {"error": str(e)}, 500
+        
+
+    @classmethod
+    def get_orders_producer(cls, mobile):
+        try:
+            orders_collection = mongo.db.orderdata
+            orders = list(orders_collection.find({"producerMobile": mobile}, {"_id": 0}))
+            return orders, 200
+        except Exception as e:
+            return {"error": str(e)}, 500
         
