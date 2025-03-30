@@ -1,6 +1,25 @@
 from flask import current_app, jsonify
 from bson import ObjectId
+import json
 from ..extensions import mongo
+import os
+from werkzeug.utils import secure_filename
+
+
+# Define the folder for storing product images/videos
+UPLOAD_FOLDER = "images/producers"
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "mp4", "mov", "avi"}
+
+def allowed_file(filename):
+    """Check if file extension is allowed"""
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def get_file_path(filename):
+    """Get correct file path"""
+    return os.path.join(UPLOAD_FOLDER, filename).replace("\\", "/")
 
 class UserController:
     @classmethod
@@ -74,6 +93,49 @@ class UserController:
             return {"message": "Profile updated successfully"}, 200
         except Exception as e:
             return {"error": str(e)}, 500
+        
+
+    @classmethod
+    def update_producer(cls,mobile,producer_data,file):
+        try:
+            mobile = int(mobile)
+            users_collection = mongo.db.userdatas
+            existing_user = users_collection.find_one({"mobile": mobile})
+            if not existing_user:
+                return {"error": "User not found"}, 404
+            # Update the user's profile
+            print(producer_data)
+            print(type(producer_data['categories']))
+            print(producer_data['categories'])
+            producer_data['categories'] = json.loads(producer_data['categories'])
+            print(("type",producer_data['categories']))
+
+            if file and allowed_file(file.filename):
+                print("File is allowed")
+                filename = secure_filename(file.filename)
+                file_path = get_file_path(filename)
+                file.save(file_path)
+                server_url = "https://vipani-io-flask.onrender.com"
+                file_url = f"{server_url.rstrip('/')}/api/v1/user/images/producers/{filename}"
+                print(file_url)
+                producer_data["media"] = file_url
+                users_collection.update_one(
+                    {"mobile": mobile},
+                    {"$set": producer_data}
+                )
+                print("data",producer_data)
+
+                return {"message": "Profile updated successfully"}, 200
+            else:
+                users_collection.update_one(
+                    {"mobile": mobile},
+                    {"$set": producer_data}
+                )
+                return {"message": "Profile updated successfully"}, 200
+        except Exception as e:
+            return {"error": str(e)}, 500
+
+            
         
         
 

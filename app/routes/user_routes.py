@@ -42,6 +42,15 @@ def update_profile():
     result = UserController.update_profile(mobile, data)
     return jsonify(result)
 
+@user_bp.route('/update-producer', methods=['PATCH'])
+def update_producer():
+    """API endpoint to update the producer of a product"""
+    mobile = request.args.get("mobile")
+    producer_data = request.form.to_dict()
+    file = request.files.get("dp")
+    response, status = UserController.update_producer(mobile, producer_data, file)
+    return jsonify(response), status
+
 @user_bp.route('/update-location', methods=['PATCH'])
 def update_location():
     """Update user location endpoint"""
