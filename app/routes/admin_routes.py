@@ -4,15 +4,17 @@ from ..controllers.admin_controller import AdminController
 # Create a blueprint for admin-related routes
 admin_bp = Blueprint("admin", __name__)
 
-# @admin_bp.route("/addbanner", methods=["POST"])
-# def add_banner():
-#     """Upload a new banner"""
-#     file = request.files.get("file")
-#     if not file:
-#         return jsonify({"error": "No file uploaded"}), 400
+@admin_bp.route("/addbanner", methods=["POST"])
+def add_banner():
+    """Upload a new banner"""
+    file = request.files.get("banner")
+    bannerId = request.form.get("bannerId")
+    bannername = request.form.get("bannername")
+    if not file:
+        return jsonify({"error": "No file uploaded"}), 400
 
-#     response, status = AdminController.add_banner(file)
-#     return jsonify(response), status
+    response, status = AdminController.add_banner(file, bannerId, bannername)
+    return jsonify(response), status
 
 
 # @admin_bp.route("/getbanners", methods=["GET"])
@@ -28,13 +30,13 @@ admin_bp = Blueprint("admin", __name__)
 #     response, status = AdminController.delete_banner(banner_id)
 #     return jsonify(response), status
 
-@admin_bp.route("/addbanner", methods=["POST"])
-def add_banner():
-    """Upload a new banner"""
-    data = request.get_json()
-    #print(data)
-    response, status = AdminController.add_banner(data)
-    return response, status
+# @admin_bp.route("/addbanner", methods=["POST"])
+# def add_banner():
+#     """Upload a new banner"""
+#     data = request.get_json()
+#     #print(data)
+#     response, status = AdminController.add_banner(data)
+#     return response, status
 
 @admin_bp.route("/getbanners", methods=["GET"])
 def get_banners():

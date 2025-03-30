@@ -21,35 +21,36 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 class AdminController:
-    # @classmethod
-    # def add_banner(cls, file):
-    #     """Handle file upload and save banner details in DB"""
-    #     if file and allowed_file(file.filename):
-    #         filename = secure_filename(file.filename)
-    #         filepath = get_file_path(filename)
-    #         file.save(filepath)  # Save file to server
+    @classmethod
+    def add_banner(cls, file, bannerId, bannername):
+        """Handle file upload and save banner details in DB"""
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            filepath = get_file_path(filename)
+            file.save(filepath)  # Save file to server
 
-    #         # Create ObjectId
-    #         banner_id = ObjectId()
+            # Create ObjectId
+            banner_id = ObjectId()
 
-    #         # Generate accessible image URL
-    #         server_url = "https://vipani-io-flask.onrender.com"
-    #         image_url = f"{server_url.rstrip('/')}/api/v1/admin/images/banners/{filename}"
+            # Generate accessible image URL
+            server_url = "https://vipani-io-flask.onrender.com"
+            image_url = f"{server_url.rstrip('/')}/api/v1/admin/images/banners/{filename}"
 
-    #         # Save to MongoDB
-    #         banner = {
-    #             "_id": banner_id,
-    #             "bannerId": str(banner_id),
-    #             "filename": filename,
-    #             "filepath": filepath,
-    #             "imageUrl": image_url  # Added image URL
-    #         }
-    #         mongo.db.banners.insert_one(banner)
+            # Save to MongoDB
+            banner = {
+                "_id": banner_id,
+                "bannerId": bannerId,
+                "bannername": bannername,
+                "filename": filename,
+                "filepath": filepath,
+                "imageUrl": image_url  # Added image URL
+            }
+            mongo.db.banners.insert_one(banner)
 
-    #         banner["_id"] = str(banner["_id"])  # Convert ObjectId for JSON response
-    #         return {"message": "Banner added successfully", "banner": banner}, 201
+            banner["_id"] = str(banner["_id"])  # Convert ObjectId for JSON response
+            return {"message": "Banner added successfully", "banner": banner}, 201
 
-    #     return {"error": "Invalid file type"}, 400
+        return {"error": "Invalid file type"}, 400
 
     # @classmethod
     # def get_banners(cls):
@@ -74,19 +75,19 @@ class AdminController:
 
     #     return {"message": "Banner deleted successfully"}, 200
 
-    @classmethod
-    def add_banner(cls, banner):
-        existing_banner = mongo.db.banners.find_one({"bannerId": banner["bannerId"]})
-        #print("existing",existing_banner)
+    # @classmethod
+    # def add_banner(cls, banner):
+    #     existing_banner = mongo.db.banners.find_one({"bannerId": banner["bannerId"]})
+    #     #print("existing",existing_banner)
         
-        if existing_banner:
-            if "_id" in existing_banner:
-                del existing_banner["_id"]
-            return {"error": "Banner already exists", "banner": existing_banner}, 409
-        mongo.db.banners.insert_one(banner)
-        if "_id" in banner:
-            del banner["_id"]
-        return {"message": "Banner added successfully", "banner": banner}, 201
+    #     if existing_banner:
+    #         if "_id" in existing_banner:
+    #             del existing_banner["_id"]
+    #         return {"error": "Banner already exists", "banner": existing_banner}, 409
+    #     mongo.db.banners.insert_one(banner)
+    #     if "_id" in banner:
+    #         del banner["_id"]
+    #     return {"message": "Banner added successfully", "banner": banner}, 201
     
     @classmethod
     def get_banners(cls):
