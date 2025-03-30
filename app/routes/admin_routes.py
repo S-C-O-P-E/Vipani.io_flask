@@ -62,8 +62,12 @@ def serve_banner(filename):
 @admin_bp.route("/addcategory", methods=["POST"])
 def add_category():
     """Add a new category"""
-    data = request.get_json()
-    response, status = AdminController.add_category(data)
+    file = request.files.get("file")
+    catid = request.form.get("catid")
+    name = request.form.get("name")
+    if not file:
+        return jsonify({"error": "No file uploaded"}), 400
+    response, status = AdminController.add_category(file, catid, name)
     return response, status
 
 

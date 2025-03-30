@@ -6,8 +6,12 @@ from bson import ObjectId
 
 # Folder to save banners
 UPLOAD_FOLDER = "images/banners"
+CATEGORY_FOLDER = "images/categories"
+
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
+if not os.path.exists(CATEGORY_FOLDER):
+        os.makedirs(CATEGORY_FOLDER)
 
 def get_file_path(filename):
     """Get correct file path"""
@@ -110,24 +114,30 @@ class AdminController:
         return send_from_directory(os.path.abspath(UPLOAD_FOLDER), filename)
     
     @classmethod
-    def add_category(cls, data):
-        """Add a new category"""
-
-        #check if category already exists
-        existing_category = mongo.db.categorydata.find_one({"catid": data["catid"]})
-        #print(existing_category)
-        if "_id" in existing_category:
-            del existing_category["_id"]
-        if existing_category:
-            return {"error": "Category already exists","category" : existing_category}, 400
-
-        mongo.db.categorydata.insert_one(data)  # Insert data into MongoDB
-
-        # Remove MongoDB's auto-generated _id before returning response
-        if "_id" in data:
-            del data["_id"]
-
-        return {"message": "Category added successfully", "category": data}, 201
+    def add_category(cls, file, catid, catname):
+        """Handle file upload and save category details in DB"""
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(CATEGORY_FOLDER, filename).replace("\\", "/")
+            file.save(filepath)  # Save file to server
+        # Create ObjectId
+        category_id = ObjectId()
+        # Generate accessible image URL
+        server_url = "https://vipani-io-flask.onrender.com"
+        image_url = f"{server_url.rstrip('/')}/api/v1/admin/images/categories/{filename}"
+        # Save to MongoDB
+        category = {
+            "_id": category_id,
+            "catid": catid,
+            "catname": catname,
+            "filename": filename,
+            "filepath": filepath,
+            "imageUrl": image_url  # Added image URL
+        }
+        mongo.db.categorydata.insert_one(category)
+        category["_id"] = str(category["_id"])
+        # Convert ObjectId for JSON response
+        return {"message": "Category added successfully", "category": category}, 201
     
     @classmethod
     def get_categories(cls):
