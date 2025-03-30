@@ -202,7 +202,7 @@ class ProductController:
         lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
 
         dlat = lat2 - lat1
-        dlon = lon2 - lon1
+        dlon = lon2 - lon2
 
         a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
         c = 2 * atan2(sqrt(a), sqrt(1 - a))
@@ -241,4 +241,13 @@ class ProductController:
             return {"error": str(e)}, 500
 
 
-    
+    @classmethod
+    def get_latest_arrivals(cls):
+        try:
+            products_collection = mongo.db.productdata
+            # Fetch the latest 10 products and exclude the '_id' field
+            latest_arrivals = list(products_collection.find({}, {"_id": 0}).sort("_id", -1).limit(50))
+            print(latest_arrivals)
+            return latest_arrivals, 200
+        except Exception as e:
+            return {"error": str(e)}, 500

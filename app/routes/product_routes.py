@@ -98,6 +98,14 @@ def get_products_near_user():
     return jsonify(response), status
 
 
+@product_bp.route('/latest-arrivals', methods=['GET'])
+def get_latest_arrivals():
+    """API endpoint to get the latest arrivals"""
+    response, status = ProductController.get_latest_arrivals()
+    return jsonify(response), status
+
+
+
 
 
 
