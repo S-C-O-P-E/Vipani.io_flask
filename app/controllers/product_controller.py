@@ -81,6 +81,19 @@ class ProductController:
             return {"error": str(e)}, 500
         
     @classmethod
+    def update_product(cls, productId, product_data):
+        try:
+            products_collection = mongo.db.productdata
+            existing_product = products_collection.find_one({"productId": productId})
+            if not existing_product:
+                return {"error": "Product not found"}, 404
+            # Update product data
+            products_collection.update_one({"productId": productId}, {"$set": product_data})
+            return {"message": "Product updated successfully"}, 200
+        except Exception as e:
+            return {"error": str(e)}, 500
+        
+    @classmethod
     def get_product(cls, product_id):
         try:
             print(product_id)
@@ -220,17 +233,17 @@ class ProductController:
             if not user:
                 return {"error": "User not found"}, 404
 
-            user_lat = int(user["latitude"])
-            user_lon = int(user["longitude"])
+            user_lat = float(user["latitude"])
+            user_lon = float(user["longitude"])
 
             # Fetch all products
             products = list(products_collection.find({}, {"_id": 0}))
-            
+
             # Compute distances
             for product in products:
-                product_lat = int(product.get("latitude", 0))
-                product_lon = int(product.get("longitude", 0))
-                product["distance"] = cls.calculate_distance(user_lat, user_lon, product_lat, product_lon)
+                product_lat = float(product.get("latitude", 0))
+                product_lon = float(product.get("longitude", 0))
+                product["distance"] = round(cls.calculate_distance(user_lat, user_lon, product_lat, product_lon), 2)  # Distance in km
 
             # Sort products by distance
             products = sorted(products, key=lambda x: x["distance"])

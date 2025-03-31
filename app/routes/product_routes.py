@@ -29,6 +29,15 @@ def add_product():
     response, status = ProductController.add_product(mobile, product_data, files)
     return jsonify(response), status
 
+@product_bp.route('/update', methods=['PATCH'])
+def update_product():
+    """API endpoint to update a product"""
+    productId = request.args.get('productId')
+    product_data = request.get_json()
+    response, status = ProductController.update_product(productId, product_data)
+    return jsonify(response), status
+
+
 @product_bp.route('/getall', methods=['GET'])
 def get_products():
     """API endpoint to get all products"""

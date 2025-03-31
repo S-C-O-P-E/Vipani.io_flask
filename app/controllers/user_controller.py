@@ -188,7 +188,33 @@ class UserController:
         except Exception as e:
             return {"error": str(e)}, 500
         
-
+    @classmethod
+    def unfollow_user(cls, data):
+        try:
+            user_mobile = data.get("consumer_mobile")
+            producer_mobile = data.get("producer_mobile")
+            follow_collection = mongo.db.userdatas
+            user = follow_collection.find_one({"mobile": user_mobile})
+            producer = follow_collection.find_one({"mobile": producer_mobile})
+            if not user or not producer:
+                return {"error": "User not found"}, 404
+            following = user.get("following", [])
+            if producer_mobile in following:
+                following.remove(producer_mobile)
+                follow_collection.update_one(
+                    {"mobile": user_mobile},
+                    {"$set": {"following": following}}
+                )
+            followers = producer.get("followers", [])
+            if user_mobile in followers:
+                followers.remove(user_mobile)
+                follow_collection.update_one(
+                    {"mobile": producer_mobile},
+                    {"$set": {"followers": followers}}
+                )
+            return {"message": "User unfollowed successfully"}, 200
+        except Exception as e:
+            return {"error": str(e)}, 500
 
     @classmethod
     def create_order(cls, mobile, data):

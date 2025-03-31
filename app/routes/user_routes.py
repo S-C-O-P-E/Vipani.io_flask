@@ -68,6 +68,13 @@ def follow():
     result = UserController.follow_user(data)
     return jsonify(result)
 
+@user_bp.route('/unfollow', methods=['POST'])
+def unfollow():
+    """Unfollow a user endpoint"""
+    data = request.get_json()
+    result = UserController.unfollow_user(data)
+    return jsonify(result)
+
 
 @user_bp.route('/create-order', methods=['POST'])
 def create_order():
