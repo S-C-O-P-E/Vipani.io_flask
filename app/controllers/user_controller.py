@@ -118,26 +118,26 @@ class UserController:
             if not existing_user:
                 return {"error": "User not found"}, 404
             # Update the user's profile
-            print(producer_data)
-            print(type(producer_data['categories']))
-            print(producer_data['categories'])
+            #print(producer_data)
+            #print(type(producer_data['categories']))
+            #print(producer_data['categories'])
             producer_data['categories'] = json.loads(producer_data['categories'])
-            print(("type",producer_data['categories']))
+            #print(("type",producer_data['categories']))
 
             if file and allowed_file(file.filename):
-                print("File is allowed")
+                #print("File is allowed")
                 filename = secure_filename(file.filename)
                 file_path = get_file_path(filename)
                 file.save(file_path)
                 server_url = "https://vipani-io-flask.onrender.com"
                 file_url = f"{server_url.rstrip('/')}/api/v1/users/images/producers/{filename}"
-                print(file_url)
+                #print(file_url)
                 producer_data["media"] = file_url
                 users_collection.update_one(
                     {"mobile": mobile},
                     {"$set": producer_data}
                 )
-                print("data",producer_data)
+                #print("data",producer_data)
 
                 return {"message": "Profile updated successfully"}, 200
             else:
