@@ -116,7 +116,7 @@ class UserController:
                 file_path = get_file_path(filename)
                 file.save(file_path)
                 server_url = "https://vipani-io-flask.onrender.com"
-                file_url = f"{server_url.rstrip('/')}/api/v1/user/images/producers/{filename}"
+                file_url = f"{server_url.rstrip('/')}/api/v1/users/images/producers/{filename}"
                 print(file_url)
                 producer_data["media"] = file_url
                 users_collection.update_one(
