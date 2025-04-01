@@ -57,6 +57,12 @@ def update_producer():
     response, status = UserController.update_producer(mobile, producer_data, file)
     return jsonify(response), status
 
+@user_bp.route('/images/producers/<filename>')
+def serve_producer_media(filename):
+    """Serve user images/videos from server"""
+    return UserController.serve_producer_media(filename)
+
+
 @user_bp.route('/update-location', methods=['PATCH'])
 def update_location():
     """Update user location endpoint"""

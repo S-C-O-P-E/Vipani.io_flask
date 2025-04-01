@@ -4,6 +4,7 @@ import json
 from ..extensions import mongo
 import os
 from werkzeug.utils import secure_filename
+from flask import send_from_directory
 
 
 # Define the folder for storing product images/videos
@@ -150,7 +151,11 @@ class UserController:
 
             
         
-        
+    @classmethod
+    def serve_producer_media(cls, filename):
+        """Serve product images/videos from server"""
+        #print("Serving producer media:", filename)
+        return send_from_directory(os.path.abspath(UPLOAD_FOLDER), filename)
 
     @classmethod
     def update_location(cls,mobile, user_data):
