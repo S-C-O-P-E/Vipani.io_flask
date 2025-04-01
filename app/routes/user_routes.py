@@ -11,6 +11,12 @@ def index():
     """Welcome to Vipani.io!"""
     return "Welcome to  Vipani.io!"
 
+@user_bp.route('/getallproducers', methods=['GET'])
+def get_all_producers():
+    """Get all producers endpoint"""
+    result = UserController.get_all_producers()
+    return jsonify(result)
+
 @user_bp.route('/getuser', methods=['GET'])
 def get_user_data():
     user_id = request.args.get('userid')

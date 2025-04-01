@@ -22,6 +22,19 @@ def get_file_path(filename):
     return os.path.join(UPLOAD_FOLDER, filename).replace("\\", "/")
 
 class UserController:
+
+    @classmethod
+    def get_all_producers(cls):
+        try:
+            users_collection = mongo.db.userdatas
+            # Fetch producers sorted by the latest created document using the _id field
+            producers = list(users_collection.find({"userType": "Producer"}).sort("_id", -1))
+            for producer in producers:
+                del producer['_id']  # Convert ObjectId to string for JSON serialization
+            return producers, 200
+        except Exception as e:
+            return {"error": str(e)}, 500
+        
     @classmethod
     def get_user(cls, user_id):
         try:
@@ -278,4 +291,3 @@ class UserController:
             return orders, 200
         except Exception as e:
             return {"error": str(e)}, 500
-        
